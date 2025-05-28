@@ -1,7 +1,6 @@
 from typing import Any
 
 from fastapi.security import HTTPBasic, HTTPBearer
-from fastapi.security.http import HTTPBase
 from fastapi.security.utils import get_authorization_scheme_param
 from strawberry import Info
 from strawberry.extensions import FieldExtension
