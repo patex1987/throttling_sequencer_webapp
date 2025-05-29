@@ -22,7 +22,9 @@ def independent_resolver(info: Info[ResolverContext, Any], game_state_input: Gam
 
 @strawberry.type
 class ThrottleStepQuery:
-    calculate_throttle_steps_differently = strawberry.field(resolver=independent_resolver, extensions=[HttpAuthExtension()])
+    calculate_throttle_steps_differently = strawberry.field(
+        resolver=independent_resolver, extensions=[HttpAuthExtension()]
+    )
 
     @strawberry.field(extensions=[HttpAuthExtension()])
     async def calculate_throttle_steps(

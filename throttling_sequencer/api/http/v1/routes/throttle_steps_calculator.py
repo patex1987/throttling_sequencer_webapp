@@ -23,7 +23,6 @@ async def throttle_steps(
     services: svcs.fastapi.DepContainer,
     request: fastapi.Request,
 ):
-
     # TODO: remove it - just some ideas - move it to a middleware
     x = HTTPBearer(auto_error=False)
     val = await x(request)
