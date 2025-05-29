@@ -34,10 +34,13 @@ class WsHttpAuthExtension(FieldExtension):
 
         result = next_(source, info, **kwargs)
 
+        print(info.context.request.headers.get("authorization"))
+
         # 3) If it's an async generator (subscription), wrap it
         if inspect.isasyncgen(result):
             async def wrapped() -> AsyncGenerator[Any, None]:
                 async for item in result:
+                    print('in the loop:{}'.format(info.context.request.headers.get("authorization")))
                     yield item
             return wrapped()
 

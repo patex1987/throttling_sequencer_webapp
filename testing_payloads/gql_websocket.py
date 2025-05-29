@@ -5,16 +5,20 @@ from websockets import Subprotocol
 
 async def main():
     uri = "ws://localhost:8080/graphql"
-    async with websockets.connect(uri, subprotocols=[Subprotocol("graphql-ws")]) as ws:
+    async with websockets.connect(
+        uri,
+        subprotocols=[Subprotocol("graphql-ws")],
+        additional_headers={"authorization": "Bearer xyz"},
+    ) as ws:
         # 1) Init
         await ws.send(json.dumps({"type": "connection_init"}))
         await ws.recv()
 
         # 2) Start the subscription
         with open("subscription_example.json", "r") as f:
-            query_body = json.load(f)
+            subscription_example = json.load(f)
 
-        await ws.send(json.dumps(query_body))
+        await ws.send(json.dumps(subscription_example))
         # await ws.send(json.dumps({
         #     "id": "1",
         #     "type": "start",
