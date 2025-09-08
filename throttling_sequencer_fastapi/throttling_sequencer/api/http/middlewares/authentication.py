@@ -45,6 +45,9 @@ class CustomAuthenticationMiddleware:
 
         if scope["type"] == "http":
             request = Request(scope, receive)
+            if "/health" in scope["path"]:
+                logger.debug(f"Auth validation skipped for health checks")
+                return await self.app(scope, receive, send)
 
             authorization = request.headers.get("Authorization")
             scheme, credentials = get_authorization_scheme_param(authorization)

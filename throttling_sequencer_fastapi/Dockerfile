@@ -58,6 +58,6 @@ RUN useradd -r -u 10001 appuser && chown -R appuser:appuser /app /venv
 USER appuser
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD \
-  sh -c 'curl -fsS http://127.0.0.1:8080/health || exit 1'
+  sh -c 'curl -fsS http://127.0.0.1:8080/api/v1/health/dummy-health || exit 1'
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080"]
