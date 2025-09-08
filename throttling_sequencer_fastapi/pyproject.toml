@@ -1,5 +1,10 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+
 [project]
-name = "throttling-sequencer-webapp"
+name = "throttling-sequencer-fastapi"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -15,6 +20,9 @@ dependencies = [
     "uvicorn>=0.34.2",
     "websockets>=15.0.1",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["throttling_sequencer"]
 
 [dependency-groups]
 dev = [

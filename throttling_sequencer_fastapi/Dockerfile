@@ -10,32 +10,42 @@ ENV PYTHONUNBUFFERED=1 \
     PATH=/venv/bin:$PATH
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl tini \
+    ca-certificates curl tini htop \
  && rm -rf /var/lib/apt/lists/*
 
+# use the selected folder as the virtual environment path
+ENV UV_PROJECT_ENVIRONMENT=/venv
+ENV PATH=/venv/bin:$PATH
 WORKDIR /app
 
-# ---------- deps (cache-friendly) ----------
-FROM base AS deps
+# ---------- dependencies (cache-friendly) ----------
+FROM base AS dependencies
 # copy only metadata first
 COPY pyproject.toml /app/pyproject.toml
+COPY README.md /app/README.md
 # COPY uv.lock /app/uv.lock   # (optional if you keep a lock)
 
-# install third-party deps only
-RUN uv sync --no-install-project --no-dev --frozen || \
-    uv sync --no-install-project --no-dev
+# install third-party dependencies only
+# TODO: check caching improvements: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
+RUN --mount=type=cache,target=/root/.cache/uv \
+  uv sync --no-install-project --no-dev --frozen || \
+  uv sync --no-install-project --no-dev
 
 # ---------- build (normal install) ----------
-FROM deps AS build
+FROM dependencies AS build
 COPY throttling_sequencer /app/throttling_sequencer
 COPY manage.py /app/main.py
-RUN uv sync --no-dev --compile-bytecode
+RUN uv sync --no-dev --compile-bytecode --no-editable
 
 # ---------- dev (editable install) ----------
-FROM deps AS dev
+FROM dependencies AS dev
+
+RUN apt-get update && apt-get install -y --no-install-recommends vim \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY throttling_sequencer /app/throttling_sequencer
 COPY manage.py /app/main.py
-RUN uv sync --dev --editable
+RUN uv sync --dev
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080","--reload"]
@@ -48,6 +58,6 @@ RUN useradd -r -u 10001 appuser && chown -R appuser:appuser /app /venv
 USER appuser
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD \
-  /bin/sh -c "wget -qO- http://127.0.0.1:8080/health || nc -z 127.0.0.1 8080 || exit 1"
+  sh -c 'curl -fsS http://127.0.0.1:8080/health || exit 1'
 ENTRYPOINT ["/usr/bin/tini","--"]
 CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080"]

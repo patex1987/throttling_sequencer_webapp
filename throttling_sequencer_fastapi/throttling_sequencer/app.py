@@ -37,6 +37,7 @@ def create_app():
 
 
 if __name__ == "__main__":
+    # TODO: remove this part and leave it to be handled by the container / execution logic
     import uvicorn
 
     uvicorn.run(create_app(), host="0.0.0.0", port=8080, log_level="info", log_config=LOGGING_CONFIG)
