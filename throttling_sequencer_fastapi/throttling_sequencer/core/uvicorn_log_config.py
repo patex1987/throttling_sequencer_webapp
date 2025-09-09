@@ -1,34 +1,11 @@
+import json
 from typing import Any
 
-LOGGING_CONFIG: dict[str, Any] = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "default": {
-            "()": "uvicorn.logging.DefaultFormatter",
-            "fmt": "%(levelprefix)s %(message)s",
-            "use_colors": None,
-        },
-        "access": {
-            "()": "uvicorn.logging.AccessFormatter",
-            "fmt": '%(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s',  # noqa: E501
-        },
-    },
-    "handlers": {
-        "default": {
-            "formatter": "default",
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stderr",
-        },
-        "access": {
-            "formatter": "access",
-            "class": "logging.StreamHandler",
-            "stream": "ext://sys.stdout",
-        },
-    },
-    "loggers": {
-        "uvicorn": {"handlers": [], "level": "INFO", "propagate": True},
-        "uvicorn.error": {"handlers": [], "level": "INFO", "propagate": True},
-        "uvicorn.access": {"handlers": [], "level": "INFO", "propagate": True},
-    },
-}
+
+def load_json_log_config(path="./throttling_sequencer/core/log_config_json.json"):
+    with open(path) as config_file:
+        logging_config = json.load(config_file)
+    return logging_config
+
+
+LOGGING_CONFIG: dict[str, Any] = load_json_log_config()

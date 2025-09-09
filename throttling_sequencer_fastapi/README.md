@@ -1,5 +1,12 @@
 # Service
 
+## Health checks
+Periodically executing a check against a dummy endpoint (you can define more advanced checks)
+```json
+{"event": "new request id has been created", "timestamp": "2025-09-08T17:11:06.045360Z", "service_name": "throttling_sequencer_fastapi", "version": "0.1", "level": "info"}
+INFO:     127.0.0.1:44232 - "GET /api/v1/health/dummy-health HTTP/1.1" 200 OK
+```
+
 # Development
 
 ## Running from IDE

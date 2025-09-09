@@ -9,7 +9,6 @@ from throttling_sequencer.api.http.v1.routes.health import health_router
 from throttling_sequencer.api.http.v1.routes.throttle_steps_calculator import throttle_router
 from throttling_sequencer.core.log_config import configure_logging
 from throttling_sequencer.core.telemetry import instrument_for_telemetry
-from throttling_sequencer.core.uvicorn_log_config import LOGGING_CONFIG
 from throttling_sequencer.di.fastapi_lifespan import di_lifespan
 
 
@@ -36,10 +35,3 @@ def create_app():
     # app.add_exception_handler(500, exception_handler)
 
     return app
-
-
-if __name__ == "__main__":
-    # TODO: remove this part and leave it to be handled by the container / execution logic
-    import uvicorn
-
-    uvicorn.run(create_app(), host="0.0.0.0", port=8080, log_level="info", log_config=LOGGING_CONFIG)

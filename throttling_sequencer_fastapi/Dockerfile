@@ -44,11 +44,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends vim \
  && rm -rf /var/lib/apt/lists/*
 
 COPY throttling_sequencer /app/throttling_sequencer
-COPY manage.py /app/main.py
+COPY manage.py /app/manage.py
 RUN uv sync --dev
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/tini","--"]
-CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080","--reload"]
+#CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080","--reload","--lo"]
+CMD ["python", "manage.py"]
 
 # ---------- prod (lean runtime) ----------
 FROM base AS prod
