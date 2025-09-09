@@ -34,7 +34,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # ---------- build (normal install) ----------
 FROM dependencies AS build
 COPY throttling_sequencer /app/throttling_sequencer
-COPY manage.py /app/main.py
+COPY manage.py /app/manage.py
 RUN uv sync --no-dev --compile-bytecode --no-editable
 
 # ---------- dev (editable install) ----------
@@ -48,7 +48,7 @@ COPY manage.py /app/manage.py
 RUN uv sync --dev
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/tini","--"]
-#CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080","--reload","--lo"]
+#CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080","--reload","--log-config","./throttling_sequencer/configuration/log_config_json.json","--factory"]
 CMD ["python", "manage.py"]
 
 # ---------- prod (lean runtime) ----------
@@ -61,4 +61,6 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD \
   sh -c 'curl -fsS http://127.0.0.1:8080/api/v1/health/dummy-health || exit 1'
 ENTRYPOINT ["/usr/bin/tini","--"]
-CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080"]
+#CMD ["uvicorn","throttling_sequencer.app:create_app","--host","0.0.0.0","--port","8080","--log-config","./throttling_sequencer/configuration/log_config_json.json","--factory"]
+CMD ["python", "manage.py"]
+
