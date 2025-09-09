@@ -2,7 +2,7 @@ import json
 from typing import Any
 
 
-def load_json_log_config(path="./throttling_sequencer/core/log_config_json.json"):
+def load_json_log_config(path="./throttling_sequencer/configuration/log_config_json.json"):
     with open(path) as config_file:
         logging_config = json.load(config_file)
     return logging_config
