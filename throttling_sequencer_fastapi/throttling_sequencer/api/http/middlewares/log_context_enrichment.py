@@ -76,6 +76,8 @@ class LogContextMiddleware:
             user_id="main_user_xyz",
             request_id=unique_request_id,
         )
+        scope["state"]["user_id"] = "main_user_xyz"
+        scope["state"]["request_id"] = unique_request_id
 
         wrapped_receive = receive
         if scope["type"] == "websocket":
