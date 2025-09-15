@@ -103,11 +103,12 @@ services:
     ports:
       - "5432:5432"       # app connects here (like RDS endpoint)
       - "8404:8404"       # HAProxy stats UI (optional)
-    tmpfs:
-      - /var/run/haproxy
+      - "9999:9999"       # runtime API
+#    tmpfs:
+#      - /var/run/haproxy
     volumes:
       - ./multi_db_configuration/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-#      - ./multi_db_configuration/haproxy/runtime:/var/run/haproxy
+      - ./multi_db_configuration/haproxy/runtime:/var/run/haproxy
 
   pgbouncer:
     image: edoburu/pgbouncer:1.21.0-p2
