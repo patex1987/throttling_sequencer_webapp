@@ -1,0 +1,126 @@
+version: "3.9"
+# multiple instances of postgres fronted with haproxy and pgbouncer.
+# ha proxy can be used to easily swap the primary and emulate outages and switchovers
+
+services:
+  throttling-sequencer-fastapi:
+    profiles: ["app"]
+    build:
+      context: ./throttling_sequencer_fastapi
+      dockerfile: Dockerfile
+      target: prod
+    image: fastapi_graphql:local_prod
+    depends_on:
+      migrate-db1:
+        condition: service_completed_successfully
+      migrate-db2:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./configuration/docker/local_production.env
+
+  pg-backend-1:
+    image: postgres:17
+    profiles: ["dependencies", "app"]
+    container_name: pg-backend-1
+    # TODO: make these part of the env files
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"       # optional, for direct debug
+    volumes:
+      - ./multi_db_configuration/database/init/pg-backend-1:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  pg-backend-2:
+    image: postgres:17
+    profiles: ["dependencies", "app"]
+    container_name: pg-backend-2
+    # TODO: make these part of the env files
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5434:5432"       # optional, for direct debug
+    volumes:
+      - ./multi_db_configuration/database/init/pg-backend-2:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  # migrate db 1 using piccolo orm
+  migrate-db1:
+    # TODO: change this to building from dockerfile
+    image: fastapi_graphql:local_prod
+    depends_on:
+      pg-backend-1:
+        condition: service_healthy
+    env_file:
+      - ./configuration/docker/local_production.env
+
+    environment:
+      PICCOLO_DB_HOST: pg-backend-1
+      PICCOLO_DB_PORT: "5432"
+      PICCOLO_DB_USER: postgres
+      PICCOLO_DB_PASSWORD: postgres
+      PICCOLO_DB_DATABASE: postgres
+    command: [ "piccolo", "migrations", "forwards", "all" ]
+    restart: "no"
+
+  # migrate db 2 using piccolo orm
+  migrate-db2:
+    # TODO: change this to building from dockerfile
+    image: fastapi_graphql:local_prod
+    depends_on:
+      pg-backend-2:
+        condition: service_healthy
+    env_file:
+      - ./configuration/docker/local_production.env
+    environment:
+      PICCOLO_DB_HOST: pg-backend-2
+      PICCOLO_DB_PORT: "5432"
+      PICCOLO_DB_USER: postgres
+      PICCOLO_DB_PASSWORD: postgres
+      PICCOLO_DB_DATABASE: postgres
+    command: ["piccolo", "migrations", "forwards", "all"]
+    restart: "no"
+
+  haproxy:
+    image: haproxy:2.8
+    profiles: ["dependencies", "app"]
+    container_name: haproxy
+    depends_on: [ pg-backend-1, pg-backend-2 ]
+    ports:
+      - "5432:5432"       # app connects here (like RDS endpoint)
+      - "8404:8404"       # HAProxy stats UI (optional)
+    tmpfs:
+      - /var/run/haproxy
+    volumes:
+      - ./multi_db_configuration/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+#      - ./multi_db_configuration/haproxy/runtime:/var/run/haproxy
+
+  pgbouncer:
+    image: edoburu/pgbouncer:1.21.0-p2
+#    image: bitnami/pgbouncer:1.21.0
+    profiles: ["dependencies", "app"]
+    container_name: pgbouncer
+    depends_on: [ haproxy ]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "6432:6432"       # app connects here if you want PgBouncer in the path
+    volumes:
+      - ./multi_db_configuration/pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./multi_db_configuration/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro

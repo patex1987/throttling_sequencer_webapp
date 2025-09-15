@@ -1,12 +1,18 @@
+import os
+
 from piccolo.conf.apps import AppRegistry
 from piccolo.engine import PostgresEngine
 
+from throttling_sequencer.core.database_config import PiccoloDBConfig
+
+PICCOLO_DB_CONFIG = PiccoloDBConfig()
+
 POSTGRES_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "user": "postgres",
-    "password": "postgres",
-    "database": "postgres",
+    "host": PICCOLO_DB_CONFIG.db_host,
+    "port": PICCOLO_DB_CONFIG.db_port,
+    "user": PICCOLO_DB_CONFIG.db_user,
+    "password": PICCOLO_DB_CONFIG.db_password,
+    "database": PICCOLO_DB_CONFIG.db_database,
 }
 
 DB = PostgresEngine(config=POSTGRES_CONFIG, extra_nodes=None)
