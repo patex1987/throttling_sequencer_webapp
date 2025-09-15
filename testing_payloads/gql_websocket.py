@@ -68,4 +68,5 @@ async def main():
         except websockets.ConnectionClosed:
             print("WebSocket closed")
 
+
 asyncio.run(main())

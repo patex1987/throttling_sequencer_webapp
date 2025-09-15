@@ -18,15 +18,11 @@ class PiccoloGqlRequestRepository(AsyncGqlRequestRepository):
 
     async def get(self, request_id: str) -> GqlRequestInfo:
         selected_request_piccolo = await (
-            GqlRequestInfoTable.objects()
-                .where(GqlRequestInfoTable.request_id == request_id)
-                .first()
+            GqlRequestInfoTable.objects().where(GqlRequestInfoTable.request_id == request_id).first()
         )
         return self.request_mapper.from_orm_to_domain(selected_request_piccolo)
-
 
     async def get_all(self) -> list[GqlRequestInfo]:
         # all_requests_piccolo = await GqlRequestInfoTable.select()
         all_requests_piccolo = await GqlRequestInfoTable.objects()
         return [self.request_mapper.from_orm_to_domain(request_piccolo) for request_piccolo in all_requests_piccolo]
-

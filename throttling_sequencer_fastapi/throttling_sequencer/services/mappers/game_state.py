@@ -6,6 +6,8 @@ from throttling_sequencer.domain.grid.coordinate import Coordinate
 
 
 class GameStateV1Mapper:
+    """Rest GameStateDto <-> Domain GameState"""
+
     @classmethod
     def from_dto(cls, game_state_dto: GameStateDto) -> GameState:
         player_units = [
@@ -30,6 +32,8 @@ class GameStateV1Mapper:
 
 
 class GameStateGqlMapper:
+    """Gql GameStateInputType <-> Domain GameState"""
+
     @classmethod
     def from_gql_type(cls, game_state_type: GameStateInputType) -> GameState:
         player_units = [

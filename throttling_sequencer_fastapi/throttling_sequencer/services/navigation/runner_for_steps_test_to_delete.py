@@ -1,10 +1,10 @@
-from throttling_sequencer.di.services import svcs_from
+from throttling_sequencer.di.services import independent_di_container
 from throttling_sequencer.services.game_state_retriever.base import BaseGameStateRetriever
 from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
 
 
 def execute():
-    container = svcs_from()
+    container = independent_di_container()
     # path_finder = container.get(PathFinder)
     throttle_steps_service = container.get(ThrottleStepsService)
     game_state_retriever = container.get(BaseGameStateRetriever)

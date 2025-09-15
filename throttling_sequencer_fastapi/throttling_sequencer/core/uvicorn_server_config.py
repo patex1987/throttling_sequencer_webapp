@@ -10,4 +10,3 @@ class UvicornServerConfig(BaseSettings):
 
     class Config:
         env_prefix = "uvicorn_"
-
