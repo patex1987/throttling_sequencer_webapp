@@ -3,7 +3,7 @@ from piccolo.engine import engine_finder, Engine
 from throttling_sequencer.domain.request_meta.gql_request_info import GqlRequestInfo
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
 from throttling_sequencer.repositories.piccolo.request_meta.table import GqlRequestInfoTable
-from throttling_sequencer.services.mappers.gql_request_info import GqlRequestInfoPiccoloMapper
+from throttling_sequencer.repositories.piccolo.mappers.gql_request_info import GqlRequestInfoPiccoloMapper
 
 
 class PiccoloGqlRequestRepository(AsyncGqlRequestRepository):

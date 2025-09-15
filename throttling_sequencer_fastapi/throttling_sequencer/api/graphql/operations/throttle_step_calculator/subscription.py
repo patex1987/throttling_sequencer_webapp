@@ -10,7 +10,7 @@ from throttling_sequencer.api.graphql.types.game.game_state import GameStateInpu
 from throttling_sequencer.api.graphql.types.navigation.unit_goal import UnitGoalType
 from throttling_sequencer.domain.grid.coordinate import Coordinate
 from throttling_sequencer.domain.grid.goal import UnitGoal
-from throttling_sequencer.services.mappers.unit_goal import UnitGoalGqlMapper
+from throttling_sequencer.api.graphql.mappers.unit_goal import UnitGoalGqlMapper
 
 
 @strawberry.type

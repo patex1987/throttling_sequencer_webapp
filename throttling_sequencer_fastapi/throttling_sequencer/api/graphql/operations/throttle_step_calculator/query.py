@@ -8,8 +8,8 @@ from throttling_sequencer.api.graphql.field_extensions.request_info_collector im
 from throttling_sequencer.api.graphql.schema_entry.resolver_context import ResolverContext, GqlOperationContext
 from throttling_sequencer.api.graphql.types.game.game_state import GameStateInputType
 from throttling_sequencer.api.graphql.types.navigation.unit_goal import UnitGoalType
-from throttling_sequencer.services.mappers.game_state import GameStateGqlMapper
-from throttling_sequencer.services.mappers.unit_goal import UnitGoalGqlMapper
+from throttling_sequencer.api.graphql.mappers.game_state import GameStateGqlMapper
+from throttling_sequencer.api.graphql.mappers.unit_goal import UnitGoalGqlMapper
 from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
 
 
