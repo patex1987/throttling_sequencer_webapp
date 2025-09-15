@@ -51,23 +51,20 @@ class CustomAuthenticationMiddleware:
 
             authorization = request.headers.get("Authorization")
             scheme, credentials = get_authorization_scheme_param(authorization)
-            logger.info(f"headers detected by fastapi CustomAuthenticationMiddleware: {request.headers}")
 
             match scheme.lower():
                 case "basic":
-                    logger.info(f"Fastapi validation: Basic auth detected: {credentials}")
+                    logger.debug(f"Fastapi validation: Basic auth detected: {credentials}")
                     basic_creds_extractor = HTTPBasic(auto_error=False)
-                    basic_creds = await basic_creds_extractor(request=request)
-                    logger.info(f"Fastapi validation: Basic auth creds: {basic_creds}")
+                    _basic_creds = await basic_creds_extractor(request=request)
                 case "bearer":
-                    logger.info(f"Fastapi validation: Bearer auth detected: {credentials}")
+                    logger.debug(f"Fastapi validation: Bearer auth detected: {credentials}")
                     bearer_creds_extractor = HTTPBearer(auto_error=False)
-                    bearer_creds = await bearer_creds_extractor(request=request)
-                    logger.info(f"Fastapi validation: Bearer auth creds: {bearer_creds}")
+                    _bearer_creds = await bearer_creds_extractor(request=request)
                 case "internal":
-                    logger.info(f"Fastapi validation: Internal auth detected: {credentials}")
+                    logger.debug(f"Fastapi validation: Internal auth detected: {credentials}")
                 case _:
-                    logger.info(f"Fastapi validation: Unknown auth scheme detected: {scheme}")
+                    logger.debug(f"Fastapi validation: Unknown auth scheme detected: {scheme}")
 
             return await self.app(scope, receive, send)
 

@@ -36,7 +36,7 @@ class WsHttpAuthExtension(FieldExtension):
 
         result = next_(source, info, **kwargs)
 
-        logger.info(info.context.request.headers.get("authorization"))
+        logger.debug(info.context.request.headers.get("authorization"))
 
         # 3) If it's an async generator (subscription), wrap it
         if inspect.isasyncgen(result):
