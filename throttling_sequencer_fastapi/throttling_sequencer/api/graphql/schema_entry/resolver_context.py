@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from strawberry.fastapi import BaseContext
 from svcs import Container
 
+from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
 from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
 
 
@@ -22,3 +23,4 @@ class GqlOperationContext(BaseContext):
     """
 
     step_service: ThrottleStepsService
+    request_info_repository: AsyncGqlRequestRepository

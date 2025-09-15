@@ -1,8 +1,11 @@
 # TODO: refactor this into smaller registrars
-
+from piccolo.engine import engine_finder, Engine
 from svcs import Container, Registry
 
 from throttling_sequencer.domain.genetic_path.configuration import GeneticConfiguration
+from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
+from throttling_sequencer.repositories.in_memory.request_meta.repo import InMemoryGqlRequestRepository
+from throttling_sequencer.repositories.piccolo.request_meta.repo import PiccoloGqlRequestRepository
 from throttling_sequencer.services.game_state_retriever.base import BaseGameStateRetriever
 from throttling_sequencer.services.game_state_retriever.random import RandomGameStateRetriever
 from throttling_sequencer.services.navigation.path_finders.base import PathFinder
@@ -30,6 +33,38 @@ def get_game_state_retriever() -> BaseGameStateRetriever:
     return RandomGameStateRetriever()
 
 
+def get_piccolo_request_repository(svcs_container: Container) -> PiccoloGqlRequestRepository:
+    piccolo_engine = svcs_container.get(Engine)
+    return PiccoloGqlRequestRepository(piccolo_engine)
+
+
+def repository_registrar(registry: Registry):
+    """
+    Inject the repository implementations into the registry.
+
+    :param registry:
+    :return:
+    """
+    # registry.register_value(AsyncGqlRequestRepository, InMemoryGqlRequestRepository())
+    piccolo_engine = engine_finder()
+    registry.register_value(Engine, piccolo_engine)
+    registry.register_factory(AsyncGqlRequestRepository, factory=get_piccolo_request_repository)
+
+
+def adjust_registry(registry: Registry):
+    registry.register_factory(PathFinder, factory=get_path_finder)
+    DEFAULT_GENETIC_CONFIG = GeneticConfiguration()
+    registry.register_value(GeneticConfiguration, DEFAULT_GENETIC_CONFIG)
+    registry.register_factory(ThrottleStepsService, factory=get_throttle_step_service)
+    registry.register_factory(BaseGameStateRetriever, factory=get_game_state_retriever)
+
+    repository_registrar(registry)
+
+
+_REGISTRY = None
+_CONTAINER = None
+
+
 def build_registry():
     registry = Registry()
     registry.register_factory(PathFinder, factory=get_path_finder)
@@ -41,19 +76,14 @@ def build_registry():
     return registry
 
 
-def adjust_registry(registry: Registry):
-    registry.register_factory(PathFinder, factory=get_path_finder)
-    DEFAULT_GENETIC_CONFIG = GeneticConfiguration()
-    registry.register_value(GeneticConfiguration, DEFAULT_GENETIC_CONFIG)
-    registry.register_factory(ThrottleStepsService, factory=get_throttle_step_service)
-    registry.register_factory(BaseGameStateRetriever, factory=get_game_state_retriever)
+def independent_di_container() -> Container:
+    """
+    An independent (non-fastapi) dependency container.
 
-
-_REGISTRY = None
-_CONTAINER = None
-
-
-def svcs_from() -> Container:
+    This is a singleton that can be used anywhere in the logic,
+    outside a fastapi based app
+    :return: svcs.Container
+    """
     global _REGISTRY
     global _CONTAINER
     if not _REGISTRY:

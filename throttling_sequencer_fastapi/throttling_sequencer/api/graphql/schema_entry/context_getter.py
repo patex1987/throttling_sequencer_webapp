@@ -3,6 +3,7 @@ from starlette.requests import Request
 from starlette.websockets import WebSocket
 
 from throttling_sequencer.api.graphql.schema_entry.resolver_context import ResolverContext, GqlOperationContext
+from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
 from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
 
 
@@ -47,5 +48,6 @@ async def gql_operation_context_getter(request: Request = None, websocket: WebSo
     async with svcs.Container(registry) as container:
         # Include FastAPI's background_tasks if needed (not shown for brevity)
         step_service = container.get(ThrottleStepsService)
+        request_info_repo = container.get(AsyncGqlRequestRepository)
 
-        yield GqlOperationContext(step_service=step_service)
+        yield GqlOperationContext(step_service=step_service, request_info_repository=request_info_repo)
