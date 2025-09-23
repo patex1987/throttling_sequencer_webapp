@@ -7,6 +7,7 @@ class PiccoloDBConfig(BaseSettings):
     db_user: str = "postgres"
     db_password: str = "postgres"
     db_database: str = "postgres"
+    db_run_migrations: bool = False
 
     class Config:
         env_prefix = "piccolo_"

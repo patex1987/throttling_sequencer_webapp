@@ -10,6 +10,7 @@ from throttling_sequencer.api.http.v1.routes.throttle_steps_calculator import th
 from throttling_sequencer.core.log_config import configure_logging
 from throttling_sequencer.core.telemetry import instrument_for_telemetry
 from throttling_sequencer.di.fastapi_lifespan import di_lifespan
+from throttling_sequencer.infrastructure.db.piccolo_throttling_sequencer_app.programmatic_migration import maybe_migrate
 
 
 def create_app():
@@ -33,5 +34,7 @@ def create_app():
 
     # app.add_exception_handler(Exception, exception_handler)
     # app.add_exception_handler(500, exception_handler)
+
+    # maybe_migrate()
 
     return app

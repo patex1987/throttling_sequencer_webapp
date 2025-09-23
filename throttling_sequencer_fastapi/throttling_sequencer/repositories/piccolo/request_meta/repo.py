@@ -1,9 +1,34 @@
+import structlog
 from piccolo.engine import engine_finder, Engine
+
+import asyncpg
+import backoff
 
 from throttling_sequencer.domain.request_meta.gql_request_info import GqlRequestInfo
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
+from throttling_sequencer.infrastructure.db.piccolo_conf import start_engine
 from throttling_sequencer.repositories.piccolo.request_meta.table import GqlRequestInfoTable
 from throttling_sequencer.repositories.piccolo.mappers.gql_request_info import GqlRequestInfoPiccoloMapper
+
+from piccolo.table import Table
+
+logger = structlog.get_logger(__name__)
+
+async def get_db_metadata():
+    row = await Table.raw(
+        "select inet_server_addr() as addr, pg_is_in_recovery() as ro"
+    ).run()
+    if not row:
+        return None
+    match = row[0]
+    return match.get("addr"), match.get("ro")
+
+
+TRANSIENT = (
+    asyncpg.exceptions.ReadOnlySQLTransactionError,  # 25006
+    asyncpg.exceptions.ConnectionDoesNotExistError,
+    ConnectionError,
+)
 
 
 class PiccoloGqlRequestRepository(AsyncGqlRequestRepository):
@@ -11,7 +36,16 @@ class PiccoloGqlRequestRepository(AsyncGqlRequestRepository):
         self.piccolo_engine = piccolo_engine
         self.request_mapper = GqlRequestInfoPiccoloMapper
 
+    @backoff.on_exception(backoff.expo, TRANSIENT, max_time=4, jitter=backoff.full_jitter)
     async def save(self, gql_request_info: GqlRequestInfo):
+        db_addr, db_read_only = await get_db_metadata()
+        logger.info(f"DB failover metadata: {db_addr=}, {db_read_only=}")
+
+        # fail early !!! (let's not use in prod)
+        if db_read_only:
+            # start_engine()
+            raise asyncpg.exceptions.ReadOnlySQLTransactionError("on reader")
+
         piccolo_request_info = self.request_mapper.from_domain_to_orm(gql_request_info)
         async with self.piccolo_engine.transaction():
             await piccolo_request_info.save()
