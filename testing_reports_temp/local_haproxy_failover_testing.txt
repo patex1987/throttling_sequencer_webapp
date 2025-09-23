@@ -1,0 +1,33 @@
+
+### Running on DB2
+["2025-09-23T08:25:04.541567Z","DB failover metadata: db_addr=IPv4Address('192.168.112.2'), db_read_only=False"]
+["2025-09-23T08:25:04.554829Z","current_data in the db: [GqlRequestInfo...
+...
+["2025-09-23T08:25:17.658236Z","DB failover metadata: db_addr=IPv4Address('192.168.112.2'), db_read_only=False"]
+["2025-09-23T08:25:17.680768Z","current_data in the db: [GqlRequestInfo...
+
+### [2025-09-23T08:25:17Z] Drain DB2
+["2025-09-23T08:25:22.155318Z","query_wait_timeout\n\nGraphQL request:2:3\n1 | query {\n2 |   calculateThrottleSteps(\n  |   ^\n3 |     gameStateInput: {"]
+["2025-09-23T08:25:26.486926Z","query_wait_timeout\n\nGraphQL request:2:3\n1 | query {\n2 |   calculateThrottleSteps(\n  |   ^\n3 |     gameStateInput: {"]
+
+[2025-09-23T08:25:27Z] Make DB1 ready
+["2025-09-23T08:25:28.556236Z","DB failover metadata: db_addr=IPv4Address('192.168.112.3'), db_read_only=False"]
+["2025-09-23T08:25:28.573820Z","current_data in the db: [GqlRequestInfo...
+["2025-09-23T08:25:30.733269Z","DB failover metadata: db_addr=IPv4Address('192.168.112.3'), db_read_only=False"]
+["2025-09-23T08:25:30.742323Z","current_data in the db: [GqlRequestInfo...
+["2025-09-23T08:25:32.910067Z","DB failover metadata: db_addr=IPv4Address('192.168.112.3'), db_read_only=False"]
+["2025-09-23T08:25:32.924336Z","current_data in the db: [GqlRequestInfo...
+["2025-09-23T08:25:35.087126Z","DB failover metadata: db_addr=IPv4Address('192.168.112.3'), db_read_only=False"]
+["2025-09-23T08:25:35.096161Z","current_data in the db: [GqlRequestInfo...
+["2025-09-23T08:25:37.258740Z","DB failover metadata: db_addr=IPv4Address('192.168.112.3'), db_read_only=False"]
+["2025-09-23T08:25:37.273749Z","current_data in the db: [GqlRequestInfo...
+
+### [2025-09-23T08:25:37Z] force both dbs down
+["2025-09-23T08:25:41.486130Z","query_wait_timeout\n\nGraphQL request:2:3\n1 | query {\n2 |   calculateThrottleSteps(\n  |   ^\n3 |     gameStateInput: {"]
+["2025-09-23T08:25:45.822061Z","query_wait_timeout\n\nGraphQL request:2:3\n1 | query {\n2 |   calculateThrottleSteps(\n  |   ^\n3 |     gameStateInput: {"]
+
+### [2025-09-23T08:25:47Z] Make DB2
+["2025-09-23T08:25:49.173458Z","DB failover metadata: db_addr=IPv4Address('192.168.112.2'), db_read_only=False"]
+["2025-09-23T08:25:49.189714Z","current_data in the db: [GqlRequestInfo...
+["2025-09-23T08:25:51.341265Z","DB failover metadata: db_addr=IPv4Address('192.168.112.2'), db_read_only=False"]
+["2025-09-23T08:25:51.356595Z","current_data in the db: [GqlRequestInfo...
