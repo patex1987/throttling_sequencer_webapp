@@ -1,5 +1,5 @@
 import structlog
-from piccolo.engine import engine_finder, Engine
+from piccolo.engine import Engine
 
 import asyncpg
 import backoff
@@ -43,7 +43,6 @@ class PiccoloGqlRequestRepository(AsyncGqlRequestRepository):
 
         # fail early !!! (let's not use in prod)
         if db_read_only:
-            # start_engine()
             raise asyncpg.exceptions.ReadOnlySQLTransactionError("on reader")
 
         piccolo_request_info = self.request_mapper.from_domain_to_orm(gql_request_info)

@@ -35,6 +35,6 @@ def create_app():
     # app.add_exception_handler(Exception, exception_handler)
     # app.add_exception_handler(500, exception_handler)
 
-    # maybe_migrate()
+    maybe_migrate()
 
     return app

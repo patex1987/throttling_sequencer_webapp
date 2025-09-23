@@ -1,9 +1,10 @@
 # TODO: refactor this into smaller registrars
-from piccolo.engine import engine_finder, Engine
+from piccolo.engine import Engine, PostgresEngine
 from svcs import Container, Registry
 
 from throttling_sequencer.domain.genetic_path.configuration import GeneticConfiguration
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
+from throttling_sequencer.infrastructure.db.piccolo_conf import DB
 from throttling_sequencer.repositories.in_memory.request_meta.repo import InMemoryGqlRequestRepository
 from throttling_sequencer.repositories.piccolo.request_meta.repo import PiccoloGqlRequestRepository
 from throttling_sequencer.services.game_state_retriever.base import BaseGameStateRetriever
@@ -34,8 +35,8 @@ def get_game_state_retriever() -> BaseGameStateRetriever:
 
 
 def get_piccolo_request_repository(svcs_container: Container) -> PiccoloGqlRequestRepository:
-    piccolo_engine = svcs_container.get(Engine)
-    return PiccoloGqlRequestRepository(piccolo_engine)
+    postgres_engine = svcs_container.get(PostgresEngine)
+    return PiccoloGqlRequestRepository(postgres_engine)
 
 
 def repository_registrar(registry: Registry):
@@ -46,8 +47,8 @@ def repository_registrar(registry: Registry):
     :return:
     """
     # registry.register_value(AsyncGqlRequestRepository, InMemoryGqlRequestRepository())
-    piccolo_engine = engine_finder()
-    registry.register_value(Engine, piccolo_engine)
+    postgres_engine = DB
+    registry.register_value(PostgresEngine, postgres_engine)
     registry.register_factory(AsyncGqlRequestRepository, factory=get_piccolo_request_repository)
 
 

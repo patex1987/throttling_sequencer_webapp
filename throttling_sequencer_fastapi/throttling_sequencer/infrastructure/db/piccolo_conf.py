@@ -7,6 +7,8 @@ from throttling_sequencer.core.database_config import PiccoloDBConfig
 
 PICCOLO_DB_CONFIG = PiccoloDBConfig()
 
+
+# TODO: create an environment specific config builder
 POSTGRES_CONFIG = {
     "host": PICCOLO_DB_CONFIG.db_host,
     "port": PICCOLO_DB_CONFIG.db_port,
@@ -14,19 +16,17 @@ POSTGRES_CONFIG = {
     "password": PICCOLO_DB_CONFIG.db_password,
     "database": PICCOLO_DB_CONFIG.db_database,
 
-    # These are asyncpg connection options. They’ll apply to EACH new connection.
-    # Failover- & PgBouncer-friendly: no server-side prepared statements
-    "statement_cache_size": 0,
-    # Default command timeout on the client side (seconds)
-    "command_timeout": 3.0,
-    # Server parameters set on connect:
+    # asyncpg connect kwargs (applied to EACH new conn)
+    "statement_cache_size": 0,          # PgBouncer/HA-friendly
+    "command_timeout": 3.0,             # default per-command timeout (seconds)
+    "timeout": 2.0,                     # connect timeout (seconds)
     "server_settings": {
         "application_name": "fastapi-strawberry-piccolo",
-        # "statement_timeout": "3000",  # ms; DB kills long queries fast
-
+        # TODO: works in aws only
+        "statement_timeout": "3000",                      # ms
+        # TODO: works in aws only
+        "idle_in_transaction_session_timeout": "5000",    # ms; kill stuck txs
     },
-    # Optional: how long to wait for TCP connect (seconds) - NOT WORKING
-    # "connect_timeout": "2.0",
 }
 
 def start_engine():
