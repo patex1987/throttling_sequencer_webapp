@@ -5,7 +5,7 @@ the APP_CONFIG.
 
 import os
 
-from piccolo.conf.apps import AppConfig, table_finder, get_package
+from piccolo.conf.apps import AppConfig
 
 from throttling_sequencer.repositories.piccolo.request_meta.table import GqlRequestInfoTable
 

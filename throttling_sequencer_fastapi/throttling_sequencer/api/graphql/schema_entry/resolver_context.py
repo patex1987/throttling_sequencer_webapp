@@ -1,21 +1,9 @@
 from dataclasses import dataclass
 
 from strawberry.fastapi import BaseContext
-from svcs import Container
 
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
 from throttling_sequencer.services.throttle_steps_service import ThrottleStepsService
-
-
-@dataclass
-class ResolverContext(BaseContext):
-    """
-    info.context that is visible to all graphql resolvers
-
-    TODO: deprecate / remove this, you should never expose the DI container into the business logic
-    """
-
-    di_container: Container
 
 
 @dataclass

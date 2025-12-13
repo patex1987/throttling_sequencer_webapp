@@ -1,4 +1,6 @@
-import asyncio, json, websockets
+import asyncio
+import json
+import websockets
 
 from websockets import Subprotocol
 

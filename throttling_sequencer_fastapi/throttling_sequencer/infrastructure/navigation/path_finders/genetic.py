@@ -3,7 +3,7 @@ import structlog
 from throttling_sequencer.domain.game.game_state import GameState
 from throttling_sequencer.domain.game.unit import Unit
 from throttling_sequencer.domain.grid.goal import UnitGoal
-from throttling_sequencer.services.navigation.path_finders.base import PathFinder
+from throttling_sequencer.domain.navigation.path_finder import PathFinderStrategy
 
 import random
 
@@ -18,7 +18,7 @@ from throttling_sequencer.domain.genetic_path.result import ThrottleSequenceGene
 logger = structlog.get_logger(__name__)
 
 
-class GeneticPathFinder(PathFinder):
+class GeneticPathFinderStrategy(PathFinderStrategy):
     def __init__(self, genetic_configration: GeneticConfiguration):
         self.genetic_configration = genetic_configration
 

@@ -11,6 +11,3 @@ class PiccoloDBConfig(BaseSettings):
 
     class Config:
         env_prefix = "piccolo_"
-
-
-

@@ -1,11 +1,7 @@
 from dataclasses import dataclass
 
-import structlog
 
 TIMEOUT_1000_MS = 1000
-
-
-logger = structlog.get_logger(__name__)
 
 
 @dataclass
@@ -40,6 +36,3 @@ class GeneticConfiguration:
     length_weight: float = 0.01
     nonzero_weight: float = 0.01
     timeout_ms: int = TIMEOUT_1000_MS
-
-    def __post_init__(self):
-        logger.info(f"New genetic config instance {id(self)}")

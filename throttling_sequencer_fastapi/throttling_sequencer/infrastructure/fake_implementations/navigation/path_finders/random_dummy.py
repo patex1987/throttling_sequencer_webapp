@@ -4,10 +4,10 @@ from throttling_sequencer.domain.game.game_state import GameState
 from throttling_sequencer.domain.game.unit import Unit
 from throttling_sequencer.domain.grid.coordinate import Coordinate
 from throttling_sequencer.domain.grid.goal import UnitGoal
-from throttling_sequencer.services.navigation.path_finders.base import PathFinder
+from throttling_sequencer.domain.navigation.path_finder import PathFinderStrategy
 
 
-class RandomDummyPathFinder(PathFinder):
+class RandomDummyPathFinderStrategy(PathFinderStrategy):
     def __init__(self):
         self.id = uuid4()
 

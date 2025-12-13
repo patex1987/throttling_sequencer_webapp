@@ -6,7 +6,6 @@ import backoff
 
 from throttling_sequencer.domain.request_meta.gql_request_info import GqlRequestInfo
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
-from throttling_sequencer.infrastructure.db.piccolo_conf import start_engine
 from throttling_sequencer.repositories.piccolo.request_meta.table import GqlRequestInfoTable
 from throttling_sequencer.repositories.piccolo.mappers.gql_request_info import GqlRequestInfoPiccoloMapper
 
@@ -14,10 +13,9 @@ from piccolo.table import Table
 
 logger = structlog.get_logger(__name__)
 
+
 async def get_db_metadata():
-    row = await Table.raw(
-        "select inet_server_addr() as addr, pg_is_in_recovery() as ro"
-    ).run()
+    row = await Table.raw("select inet_server_addr() as addr, pg_is_in_recovery() as ro").run()
     if not row:
         return None
     match = row[0]

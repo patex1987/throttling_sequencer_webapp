@@ -1,4 +1,4 @@
-from piccolo.columns import Varchar, Text, Integer, UUID
+from piccolo.columns import Text, Integer, UUID
 from piccolo.table import Table
 
 

@@ -1,4 +1,4 @@
-from collections import deque, OrderedDict
+from collections import OrderedDict
 
 from throttling_sequencer.domain.request_meta.gql_request_info import GqlRequestInfo
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository

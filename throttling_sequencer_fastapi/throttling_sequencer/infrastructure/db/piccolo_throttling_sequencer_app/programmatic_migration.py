@@ -14,5 +14,5 @@ def maybe_migrate():
 
     piccolo_db_config = PiccoloDBConfig()
     if piccolo_db_config.db_run_migrations:
-        logger.info('Running migrations')
+        logger.info("Running migrations")
         os.system("piccolo migrations forwards all")

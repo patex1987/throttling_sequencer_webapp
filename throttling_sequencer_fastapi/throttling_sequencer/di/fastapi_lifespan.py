@@ -2,7 +2,7 @@ import svcs.fastapi
 
 import fastapi
 
-from throttling_sequencer.di.services import adjust_registry
+from throttling_sequencer.di.registry import adjust_registry
 from throttling_sequencer.infrastructure.db.piccolo_conf import DB
 from throttling_sequencer.infrastructure.db.piccolo_throttling_sequencer_app.pool_config import get_db_pool_config
 
@@ -26,4 +26,3 @@ async def di_lifespan(app: fastapi.FastAPI, registry: svcs.Registry):
     # Shutdown
     finally:
         await DB.close_connection_pool()  # graceful shutdown
-

@@ -5,7 +5,7 @@ import strawberry
 from strawberry import Info
 
 from throttling_sequencer.api.graphql.field_extensions.ws_auth_extension import WsHttpAuthExtension
-from throttling_sequencer.api.graphql.schema_entry.resolver_context import ResolverContext
+from throttling_sequencer.api.graphql.schema_entry.resolver_context import GqlOperationContext
 from throttling_sequencer.api.graphql.types.game.game_state import GameStateInputType
 from throttling_sequencer.api.graphql.types.navigation.unit_goal import UnitGoalType
 from throttling_sequencer.domain.grid.coordinate import Coordinate
@@ -17,7 +17,7 @@ from throttling_sequencer.api.graphql.mappers.unit_goal import UnitGoalGqlMapper
 class ThrottleStepSubscription:
     @strawberry.subscription(extensions=[WsHttpAuthExtension()])
     async def generate_steps(
-        self, info: Info[ResolverContext, Any], game_state_input: GameStateInputType
+        self, info: Info[GqlOperationContext, Any], game_state_input: GameStateInputType
     ) -> AsyncGenerator[UnitGoalType, None]:
         """
         Emits StepInfo objects from range_input.start up to range_input.end,

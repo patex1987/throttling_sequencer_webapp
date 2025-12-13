@@ -12,19 +12,8 @@ from throttling_sequencer.api.graphql.mappers.game_state import GameStateGqlMapp
 from throttling_sequencer.api.graphql.mappers.unit_goal import UnitGoalGqlMapper
 
 
-# def independent_resolver(info: Info[ResolverContext, Any], game_state_input: GameStateInputType) -> list[UnitGoalType]:
-#     throttle_steps_service = info.context.di_container.get(ThrottleStepsService)
-#     game_state = GameStateGqlMapper.from_gql_type(game_state_input)
-#     throttle_steps = throttle_steps_service.calculate_throttle_steps(game_state)
-#     throttle_steps_gql = [UnitGoalGqlMapper.to_gql_output(step) for step in throttle_steps]
-#     return throttle_steps_gql
-
-
 @strawberry.type
 class ThrottleStepQuery:
-    # calculate_throttle_steps_differently = strawberry.field(
-    #     resolver=independent_resolver, extensions=[HttpAuthExtension()]
-    # )
 
     # TODO: make the business logic of extensions injectable
     @strawberry.field(extensions=[HttpAuthExtension(), RequestInfoCollectorExtension()])
@@ -32,9 +21,7 @@ class ThrottleStepQuery:
         self,
         info: Info[GqlOperationContext, Any],
         game_state_input: GameStateInputType,
-        # self, info: Info[ResolverContext, Any], game_state_input: GameStateInputType
     ) -> list[UnitGoalType]:
-        # throttle_steps_service = info.context.di_container.get(ThrottleStepsService)
         throttle_steps_service = info.context.step_service
         game_state = GameStateGqlMapper.from_gql_type(game_state_input)
         throttle_steps = throttle_steps_service.calculate_throttle_steps(game_state)

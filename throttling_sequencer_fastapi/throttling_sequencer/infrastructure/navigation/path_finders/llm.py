@@ -1,10 +1,14 @@
 from throttling_sequencer.domain.game.game_state import GameState
 from throttling_sequencer.domain.game.unit import Unit
 from throttling_sequencer.domain.grid.goal import UnitGoal
-from throttling_sequencer.services.navigation.path_finders.base import PathFinder
+from throttling_sequencer.domain.navigation.path_finder import PathFinderStrategy
 
 
-class LLMPathFinder(PathFinder):
+class LLMPathFinderStrategy(PathFinderStrategy):
+    """
+    PathFinder that uses an LLM to determine the path to the destination.
+    """
+
     def find_path(self, game_state: GameState, main_unit: Unit, target_unit: Unit) -> list[UnitGoal]:
         """
         TODO: add the actual LLM call

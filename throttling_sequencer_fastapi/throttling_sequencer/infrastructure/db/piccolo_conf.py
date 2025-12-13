@@ -1,5 +1,3 @@
-import os
-
 from piccolo.conf.apps import AppRegistry
 from piccolo.engine import PostgresEngine
 
@@ -15,11 +13,10 @@ POSTGRES_CONFIG = {
     "user": PICCOLO_DB_CONFIG.db_user,
     "password": PICCOLO_DB_CONFIG.db_password,
     "database": PICCOLO_DB_CONFIG.db_database,
-
     # asyncpg connect kwargs (applied to EACH new conn)
-    "statement_cache_size": 0,          # PgBouncer/HA-friendly
-    "command_timeout": 3.0,             # default per-command timeout (seconds)
-    "timeout": 2.0,                     # connect timeout (seconds)
+    "statement_cache_size": 0,  # PgBouncer/HA-friendly
+    "command_timeout": 3.0,  # default per-command timeout (seconds)
+    "timeout": 2.0,  # connect timeout (seconds)
     "server_settings": {
         "application_name": "fastapi-strawberry-piccolo",
         # TODO: works in aws only
@@ -29,9 +26,11 @@ POSTGRES_CONFIG = {
     },
 }
 
+
 def start_engine():
     engine = PostgresEngine(config=POSTGRES_CONFIG, extra_nodes=None)
     return engine
+
 
 DB = start_engine()
 
