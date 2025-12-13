@@ -14,7 +14,6 @@ from throttling_sequencer.api.graphql.mappers.unit_goal import UnitGoalGqlMapper
 
 @strawberry.type
 class ThrottleStepQuery:
-
     # TODO: make the business logic of extensions injectable
     @strawberry.field(extensions=[HttpAuthExtension(), RequestInfoCollectorExtension()])
     async def calculate_throttle_steps(

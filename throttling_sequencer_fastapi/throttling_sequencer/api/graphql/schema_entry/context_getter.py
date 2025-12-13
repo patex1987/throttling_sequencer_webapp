@@ -1,3 +1,5 @@
+from typing import AsyncGenerator
+
 import svcs
 from starlette.requests import Request
 from starlette.websockets import WebSocket
@@ -7,7 +9,9 @@ from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRe
 from throttling_sequencer.services.throttle_steps_service import ThrottleStepsService
 
 
-async def gql_operation_context_getter(request: Request = None, websocket: WebSocket = None):
+async def gql_operation_context_getter(
+    request: Request = None, websocket: WebSocket = None
+) -> AsyncGenerator[GqlOperationContext, None]:
     """
     A more explicit context for graphql operations, this way the operations
     won't have access to the whole container, but only to the limited scope

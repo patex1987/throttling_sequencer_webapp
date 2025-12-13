@@ -1,8 +1,7 @@
 import fastapi
-from strawberry.fastapi import GraphQLRouter
+import svcs
 
-from throttling_sequencer.api.graphql.schema_entry.build import build_schema
-from throttling_sequencer.api.graphql.schema_entry.context_getter import gql_operation_context_getter
+from throttling_sequencer.api.graphql.router import create_graphql_router
 from throttling_sequencer.api.http.middlewares.authentication import CustomAuthenticationMiddleware
 from throttling_sequencer.api.http.middlewares.log_context_enrichment import LogContextMiddleware
 from throttling_sequencer.api.http.v1.routes.health import health_router
@@ -13,23 +12,24 @@ from throttling_sequencer.di.fastapi_lifespan import di_lifespan
 from throttling_sequencer.infrastructure.db.piccolo_throttling_sequencer_app.programmatic_migration import maybe_migrate
 
 
-def create_app():
+def create_app(*, registry: svcs.Registry) -> fastapi.FastAPI:
+    """
+    Construct the FastAPI application using an explicitly provided DI registry.
+
+    The application lifespan is wrapped with ``svcs.fastapi.lifespan`` to ensure
+    that the given registry is used consistently for dependency resolution and
+    properly managed for startup and shutdown.
+    """
     configure_logging()
-    app = fastapi.FastAPI(lifespan=di_lifespan)
+    svcs_lifespan = svcs.fastapi.lifespan(di_lifespan, registry=registry)
+    app = fastapi.FastAPI(lifespan=svcs_lifespan)
+
     app.include_router(router=health_router, prefix="/api/v1/health", tags=["health"])
     app.include_router(router=throttle_router, prefix="/api/v1/throttle", tags=["throttle"])
 
-    gql_schema = build_schema()
-    graphql_router = GraphQLRouter(
-        schema=gql_schema,
-        context_getter=gql_operation_context_getter,
-        graphql_ide="graphiql",
-        subscription_protocols=["graphql-ws", "graphql-transport-ws"],
-    )
+    graphql_router = create_graphql_router()
     app.include_router(router=graphql_router, prefix="/graphql", tags=["graphql"])
 
-    app.add_middleware(CustomAuthenticationMiddleware)
-    app.add_middleware(LogContextMiddleware)
     instrument_for_telemetry(app)
 
     # app.add_exception_handler(Exception, exception_handler)
@@ -38,3 +38,15 @@ def create_app():
     maybe_migrate()
 
     return app
+
+
+def register_middlewares(app: fastapi.FastAPI, di_container: svcs.Container) -> None:
+    """
+    Register FastAPI middleware components.
+
+    Middleware is initialized using a container derived from the same DI registry
+    as the rest of the application, ensuring consistent access to shared
+    dependencies (e.g. authentication, request context, logging).
+    """
+    app.add_middleware(CustomAuthenticationMiddleware)
+    app.add_middleware(LogContextMiddleware)

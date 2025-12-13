@@ -16,7 +16,7 @@ def main():
         configure_logging()
         logger.info(f"Uvicorn server configuration: {uvicorn_server_config}")
     uvicorn.run(
-        "throttling_sequencer.app:create_app",
+        "throttling_sequencer.di.fastapi_composition:compose_fastapi_app_with_registrars",
         host=uvicorn_server_config.host,
         port=uvicorn_server_config.port,
         log_level=uvicorn_server_config.log_level,

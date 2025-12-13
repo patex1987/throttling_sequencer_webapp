@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 
 TIMEOUT_1000_MS = 1000
+TIMEOUT_50_000_MS = 50_000
 
 
 @dataclass
@@ -24,8 +25,8 @@ class GeneticConfiguration:
     """
 
     max_sequence_length: int = 100
-    population_size: int = 100
-    num_generations: int = 100
+    population_size: int = 600
+    num_generations: int = 300
     mutation_rate: float = 0.1
     num_best_parents: int = 20
     num_worst_parents: int = 10
@@ -35,4 +36,4 @@ class GeneticConfiguration:
     speed_weight: float = 0.5
     length_weight: float = 0.01
     nonzero_weight: float = 0.01
-    timeout_ms: int = TIMEOUT_1000_MS
+    timeout_ms: int = TIMEOUT_50_000_MS

@@ -2,8 +2,6 @@ from throttling_sequencer.domain.game.game_state import GameState
 from throttling_sequencer.domain.grid.goal import UnitGoal
 from throttling_sequencer.domain.navigation.path_finder import PathFinderStrategy
 
-import structlog
-
 
 class ThrottleStepsService:
     def __init__(self, path_finder: PathFinderStrategy):
