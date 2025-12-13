@@ -4,7 +4,7 @@ from starlette.websockets import WebSocket
 
 from throttling_sequencer.api.graphql.schema_entry.resolver_context import ResolverContext, GqlOperationContext
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
-from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
+from throttling_sequencer.services.throttle_steps_service import ThrottleStepsService
 
 
 def di_context_getter(

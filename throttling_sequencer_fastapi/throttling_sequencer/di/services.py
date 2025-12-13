@@ -5,14 +5,13 @@ from svcs import Container, Registry
 from throttling_sequencer.domain.genetic_path.configuration import GeneticConfiguration
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
 from throttling_sequencer.infrastructure.db.piccolo_conf import DB
-from throttling_sequencer.repositories.in_memory.request_meta.repo import InMemoryGqlRequestRepository
 from throttling_sequencer.repositories.piccolo.request_meta.repo import PiccoloGqlRequestRepository
 from throttling_sequencer.services.game_state_retriever.base import BaseGameStateRetriever
 from throttling_sequencer.services.game_state_retriever.random import RandomGameStateRetriever
 from throttling_sequencer.services.navigation.path_finders.base import PathFinder
 from throttling_sequencer.services.navigation.path_finders.genetic import GeneticPathFinder
 from throttling_sequencer.services.navigation.path_finders.random_dummy import RandomDummyPathFinder
-from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
+from throttling_sequencer.services.throttle_steps_service import ThrottleStepsService
 
 
 def get_path_finder(svcs_container: Container) -> PathFinder:

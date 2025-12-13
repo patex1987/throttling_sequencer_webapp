@@ -1,6 +1,6 @@
 from throttling_sequencer.di.services import independent_di_container
 from throttling_sequencer.services.game_state_retriever.base import BaseGameStateRetriever
-from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
+from throttling_sequencer.services.throttle_steps_service import ThrottleStepsService
 
 
 def execute():

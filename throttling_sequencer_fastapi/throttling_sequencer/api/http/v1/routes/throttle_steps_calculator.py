@@ -8,7 +8,7 @@ from throttling_sequencer.api.http.v1.dto.game_state import GameStateDto
 from throttling_sequencer.api.http.v1.dto.unit_goal import UnitGoalDto
 from throttling_sequencer.api.http.v1.mappers.game_state import GameStateV1Mapper
 from throttling_sequencer.api.http.v1.mappers.unit_goal import UnitGoalMapperV1
-from throttling_sequencer.services.navigation.throttle_steps_service import ThrottleStepsService
+from throttling_sequencer.services.throttle_steps_service import ThrottleStepsService
 
 throttle_router = APIRouter()
 

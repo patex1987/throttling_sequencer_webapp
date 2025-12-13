@@ -23,9 +23,9 @@ POSTGRES_CONFIG = {
     "server_settings": {
         "application_name": "fastapi-strawberry-piccolo",
         # TODO: works in aws only
-        "statement_timeout": "3000",                      # ms
+        # "statement_timeout": "3000",                      # ms
         # TODO: works in aws only
-        "idle_in_transaction_session_timeout": "5000",    # ms; kill stuck txs
+        # "idle_in_transaction_session_timeout": "5000",    # ms; kill stuck txs
     },
 }
 
