@@ -1,17 +1,18 @@
-from typing import Protocol
-
 import structlog
+
+from throttling_sequencer.domain.infrastructure_setup import InfrastructureSetup
 
 logger = structlog.get_logger(__name__)
 
 
-class InfrastructureSetup(Protocol):
-    async def setup(self) -> None: ...
+class ProductionInfrastructureSetup(InfrastructureSetup):
+    """
+    Infrastructure setup implementation for production.
 
-    async def shutdown(self) -> None: ...
+    Manages the lifecycle of Piccolo ORM with PostgreSQL db connection
+    pools during application startup and shutdown.
+    """
 
-
-class PiccoloInfrastructureSetup(InfrastructureSetup):
     async def setup(self) -> None:
         from throttling_sequencer.infrastructure.db.piccolo_conf import DB
         from throttling_sequencer.infrastructure.db.piccolo_throttling_sequencer_app.pool_config import (
@@ -27,11 +28,3 @@ class PiccoloInfrastructureSetup(InfrastructureSetup):
         logger.info("Shutting down db connection pool")
 
         await DB.close_connection_pool()
-
-
-class LocalDevInfrastructureSetup(InfrastructureSetup):
-    async def setup(self) -> None:
-        pass
-
-    async def shutdown(self) -> None:
-        pass
