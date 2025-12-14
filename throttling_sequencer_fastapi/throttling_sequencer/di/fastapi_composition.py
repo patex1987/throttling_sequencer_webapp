@@ -54,6 +54,7 @@ def create_app_with_selected_di(
     app_scoped_container = svcs.Container(app_scoped_registry)
 
     app.state.fastapi_lifespan_registrars = app_registrars.fastapi_lifespan_registrars
+    app.state.infrastructure_setup = app_registrars.infrastructure_bootstrapper
 
     register_middlewares(app, app_scoped_container)
 

@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from throttling_sequencer.di.app_wide_registrar import FastapiDIRegistrars
+from throttling_sequencer.di.app_wide_registrar import ApplicationDIRegistrars
 
 
 class RegistrarProvider(Protocol):
-    def __call__(self) -> FastapiDIRegistrars: ...
+    def __call__(self) -> ApplicationDIRegistrars: ...

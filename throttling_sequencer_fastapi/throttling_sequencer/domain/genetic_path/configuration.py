@@ -36,4 +36,4 @@ class GeneticConfiguration:
     speed_weight: float = 0.5
     length_weight: float = 0.01
     nonzero_weight: float = 0.01
-    timeout_ms: int = TIMEOUT_50_000_MS
+    timeout_ms: int = TIMEOUT_1000_MS

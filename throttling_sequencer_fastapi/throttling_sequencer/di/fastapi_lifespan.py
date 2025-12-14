@@ -3,8 +3,7 @@ import svcs.fastapi
 import fastapi
 
 from throttling_sequencer.di.registry_builder import apply_registrars
-from throttling_sequencer.infrastructure.db.piccolo_conf import DB
-from throttling_sequencer.infrastructure.db.piccolo_throttling_sequencer_app.pool_config import get_db_pool_config
+from throttling_sequencer.infrastructure.infra_setup.base import InfrastructureSetup
 
 
 async def di_lifespan(app: fastapi.FastAPI, registry: svcs.Registry):
@@ -31,13 +30,17 @@ async def di_lifespan(app: fastapi.FastAPI, registry: svcs.Registry):
     :param registry: The shared ``svcs.Registry`` instance provided by the
         composition root and managed by ``svcs.fastapi.lifespan`
     """
-    # TODO: make this optional and configurable through env vars
-    db_pool_config = get_db_pool_config()
-    await DB.start_connection_pool(**db_pool_config)
+    # db_pool_config = get_db_pool_config()
+    # await DB.start_connection_pool(**db_pool_config)
+    infra_setup: InfrastructureSetup = app.state.infrastructure_setup
 
-    fastapi_lifespan_registrars = app.state.fastapi_lifespan_registrars
-    apply_registrars(fastapi_lifespan_registrars, registry=registry)
     try:
+        fastapi_lifespan_registrars = app.state.fastapi_lifespan_registrars
+        apply_registrars(fastapi_lifespan_registrars, registry=registry)
+
+        await infra_setup.setup()
+
         yield {"application": "throttling_calculator"}
     finally:
-        await DB.close_connection_pool()  # graceful shutdown
+        # await DB.close_connection_pool()  # graceful shutdown
+        await infra_setup.shutdown()
