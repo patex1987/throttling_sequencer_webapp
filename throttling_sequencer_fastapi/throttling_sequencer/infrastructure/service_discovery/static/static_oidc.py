@@ -18,7 +18,7 @@ class StaticOpenIdConfigurationProvider(OpenIdConfigurationProvider):
     In production, this should be replaced with a service discovery-based implementation
     that extracts OIDC configuration from service discovery output.
 
-    discovery url example: http://localhost:8082/realms/throttling-test/.well-known/openid-configuration
+    discovery url example: http://localhost:8082/realms/throttling-test
     """
 
     def __init__(self, *, realm_name: str, discovery_url: str):

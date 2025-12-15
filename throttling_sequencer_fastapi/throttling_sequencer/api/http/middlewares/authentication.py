@@ -5,8 +5,11 @@ import fastapi
 import starlette.types
 
 import structlog
+from starlette import status
 
+from throttling_sequencer.api.context.constants import USER_ID_NAME, JWT_TOKEN_NAME
 from throttling_sequencer.application.authentication.manager import AsyncAuthenticationManager
+from throttling_sequencer.domain.authentication.exceptions import AuthenticationError
 
 logger = structlog.get_logger(__name__)
 
@@ -28,7 +31,26 @@ class AuthenticationMiddleware:
             logger.debug("Auth validation skipped for health checks")
             return await self.app(scope, receive, send)
 
-        user_identity = await self.authentication_manager.authenticate_jwt_token(None)
+        try:
+            extracted_token = scope["state"].get(JWT_TOKEN_NAME)
+            user_identity = await self.authentication_manager.authenticate_jwt_token(extracted_token)
+            structlog.contextvars.bind_contextvars(user_id=user_identity.user_id)
+            scope["state"][USER_ID_NAME] = user_identity.user_id
+        except AuthenticationError as e:
+            logger.warning("Authentication failed", exc_info=e)
+            response = fastapi.responses.JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content={"detail": "Authentication failed"},
+            )
+            await response(scope, receive, send)
+            return
+        except Exception as e:
+            logger.error("Unexpected error during authentication", exc_info=e)
+            response = fastapi.responses.JSONResponse(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content={"detail": "Unexpected error during authentication"},
+            )
+            await response(scope, receive, send)
+            return
 
-        # TODO: add exception handling here
         await self.app(scope, receive, send)

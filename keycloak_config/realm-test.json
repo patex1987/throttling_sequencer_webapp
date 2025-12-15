@@ -16,9 +16,11 @@
       "enabled": true,
       "publicClient": false,
       "secret": "test-client-secret",
+
       "serviceAccountsEnabled": true,
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": false,
+
       "protocol": "openid-connect",
       "defaultClientScopes": ["profile", "email", "roles"]
     }
@@ -28,7 +30,13 @@
     {
       "username": "test-user",
       "enabled": true,
+
+      "firstName": "Test",
+      "lastName": "User",
+
       "email": "test-user@example.com",
+      "emailVerified": true,
+
       "credentials": [
         {
           "type": "password",
@@ -36,11 +44,20 @@
           "temporary": false
         }
       ],
+
+      "requiredActions": [],
       "realmRoles": ["user"]
     },
     {
       "username": "admin-user",
       "enabled": true,
+
+      "firstName": "Admin",
+      "lastName": "User",
+
+      "email": "admin-user@example.com",
+      "emailVerified": true,
+
       "credentials": [
         {
           "type": "password",
@@ -48,6 +65,8 @@
           "temporary": false
         }
       ],
+
+      "requiredActions": [],
       "realmRoles": ["admin"]
     }
   ]

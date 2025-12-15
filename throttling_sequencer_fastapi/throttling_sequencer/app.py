@@ -5,10 +5,11 @@ from throttling_sequencer.api.graphql.router import create_graphql_router
 from throttling_sequencer.api.http.middlewares.authentication import (
     AuthenticationMiddleware,
 )
-from throttling_sequencer.api.http.middlewares.log_context_enrichment import LogContextMiddleware
+from throttling_sequencer.api.http.middlewares.execution import ExecutionContextMiddleware
 from throttling_sequencer.api.http.v1.routes.health import health_router
 from throttling_sequencer.api.http.v1.routes.throttle_steps_calculator import throttle_router
 from throttling_sequencer.application.authentication.manager import AsyncAuthenticationManager
+from throttling_sequencer.application.execution_context import ExecutionContextEnricher
 from throttling_sequencer.core.log_config import configure_logging
 from throttling_sequencer.core.telemetry import instrument_for_telemetry
 from throttling_sequencer.di.fastapi_lifespan import di_lifespan
@@ -52,4 +53,4 @@ def register_middlewares(app: fastapi.FastAPI, di_container: svcs.Container) -> 
     dependencies (e.g. authentication, request context, logging).
     """
     app.add_middleware(AuthenticationMiddleware, authentication_manager=di_container.get(AsyncAuthenticationManager))
-    app.add_middleware(LogContextMiddleware)
+    app.add_middleware(ExecutionContextMiddleware, execution_context_enricher=di_container.get(ExecutionContextEnricher))
