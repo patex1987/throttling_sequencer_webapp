@@ -1,5 +1,5 @@
 import svcs
-from piccolo.engine import PostgresEngine, engine_finder
+from piccolo.engine import engine_finder
 from throttling_sequencer.di.registrars.base import Registrar
 from throttling_sequencer.domain.request_meta.gql_request_repo import AsyncGqlRequestRepository
 from throttling_sequencer.repositories.piccolo.request_meta.repo import PiccoloGqlRequestRepository

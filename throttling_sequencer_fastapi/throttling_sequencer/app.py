@@ -2,10 +2,13 @@ import fastapi
 import svcs
 
 from throttling_sequencer.api.graphql.router import create_graphql_router
-from throttling_sequencer.api.http.middlewares.authentication import CustomAuthenticationMiddleware
+from throttling_sequencer.api.http.middlewares.authentication import (
+    AuthenticationMiddleware,
+)
 from throttling_sequencer.api.http.middlewares.log_context_enrichment import LogContextMiddleware
 from throttling_sequencer.api.http.v1.routes.health import health_router
 from throttling_sequencer.api.http.v1.routes.throttle_steps_calculator import throttle_router
+from throttling_sequencer.application.authentication.manager import AsyncAuthenticationManager
 from throttling_sequencer.core.log_config import configure_logging
 from throttling_sequencer.core.telemetry import instrument_for_telemetry
 from throttling_sequencer.di.fastapi_lifespan import di_lifespan
@@ -48,5 +51,5 @@ def register_middlewares(app: fastapi.FastAPI, di_container: svcs.Container) -> 
     as the rest of the application, ensuring consistent access to shared
     dependencies (e.g. authentication, request context, logging).
     """
-    app.add_middleware(CustomAuthenticationMiddleware)
+    app.add_middleware(AuthenticationMiddleware, authentication_manager=di_container.get(AsyncAuthenticationManager))
     app.add_middleware(LogContextMiddleware)
