@@ -119,6 +119,7 @@ graph TB
 |------|------------|
 | Web Framework | **FastAPI** |
 | GraphQL | **Strawberry GraphQL** |
+| Authentication | **Keycloak** (JWT / OpenID Connect) |
 | Async DB | **asyncpg** |
 | ORM | **Piccolo ORM** |
 | Dependency Injection | **svcs** |
@@ -446,6 +447,16 @@ Supports:
 
 ## 8. API Overview
 
+### Authentication
+
+The service supports JWT authentication via Keycloak:
+
+* **Keycloak Integration**: JWT tokens are validated using OpenID Connect discovery
+* **Token Retrieval**: Use `testing_payloads/get_keycloak_token.py` to get tokens programmatically
+* **Documentation**: See `testing_payloads/keycloak_token_retrieval.md` for details
+
+For local development, Keycloak runs via Docker Compose (port 8082) with test realm `throttling-test`.
+
 ### REST (FastAPI)
 
 Base URLs:
@@ -457,6 +468,8 @@ Base URLs:
 
 Request body: `GameStateDto`
 Response: list of `UnitGoalDto`
+
+Authentication: Bearer token (JWT) in `Authorization` header
 
 ### GraphQL (Strawberry)
 
@@ -472,6 +485,8 @@ Supports both:
 
 * `graphql-ws`
 * `graphql-transport-ws`
+
+Authentication: Bearer token (JWT) in `Authorization` header
 
 Example subscription script:
 `testing_payloads/gql_websocket.py`
@@ -507,6 +522,8 @@ Inside `testing_payloads/`:
 | `gql_curl.sh`                               | Send GraphQL queries                        |
 | `gql_websocket.py`                          | Test GraphQL subscriptions                  |
 | `game_state.json`                           | Example REST payload                        |
+| `get_keycloak_token.py`                     | Retrieve Keycloak JWT tokens (Python)       |
+| `keycloak_token_retrieval.md`               | Keycloak authentication guide              |
 | `aws_rds_port_forward_failover_sequence.sh` | Run Aurora failover                         |
 | `multi_db_flip.sh`                          | Flip between local DB instances via HAProxy |
 | `graphql_api_poller.sh`                     | Stress test GraphQL endpoint                |

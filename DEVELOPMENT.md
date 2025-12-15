@@ -34,7 +34,32 @@ Prerequisites:
 - Python 3.12+
 - A running Postgres instance - as **database dependency is baked in to the code atm**
   - there is an in-memory repository already available, which will be used fro local testing as a default in the future 
+- (Optional) Keycloak instance for JWT authentication - see section 2.1
 - Set the correct environment file: e.g. `configuration/local_or_ide/local_development.env`
+
+## 2.1. Keycloak Setup (Optional)
+
+For local development, Keycloak can be run via Docker Compose:
+
+```bash
+docker compose -f docker-compose.e2e.yml up keycloak
+```
+
+or bring up all your dependencies except for the main service:
+```bash
+docker compose -f docker-compose.e2e.yml -f docker-compose.multi-db.dev.yml --profile dependencies up
+```
+
+Keycloak will be available at `http://localhost:8082` with:
+- Realm: `throttling-test`
+- Admin console: `http://localhost:8082` (admin/admin)
+- Test users: `test-user` / `test-password` and `admin-user` / `admin-password`
+
+To retrieve tokens for API testing, see `testing_payloads/keycloak_token_retrieval.md` and use the Python script:
+
+```bash
+python testing_payloads/get_keycloak_token.py
+```
 
 
 Then:
@@ -241,8 +266,15 @@ Features:
 * Query + Mutation
 * Subscriptions (WS + graphql-ws)
 * Auth via custom Strawberry extensions: `HttpAuthExtension`, `WsHttpAuthExtension`
+  * JWT tokens from Keycloak are validated using OpenID Connect discovery
   * Please note that these field extensions are still under development
 * Request metadata collector (`RequestInfoCollectorExtension`)
+
+Authentication:
+
+* Bearer tokens (JWT) from Keycloak are supported
+* Retrieve tokens using: `python testing_payloads/get_keycloak_token.py`
+* See `testing_payloads/keycloak_token_retrieval.md` for details
 
 Subscription example:
 
@@ -254,10 +286,23 @@ python testing_payloads/gql_websocket.py
 
 # 8. REST Development
 
-Example call:
+Example call with Basic auth (legacy):
 
 ```
 curl -X POST -H "Authorization: Basic Z2Fib3I6eHl6" \
+     -H "Content-Type: application/json" \
+     -d @testing_payloads/game_state.json \
+     http://localhost:8080/api/v1/throttle/calculate_throttle_steps
+```
+
+Example call with Keycloak JWT token:
+
+```bash
+# Get token
+TOKEN=$(python testing_payloads/get_keycloak_token.py)
+
+# Use token in API call
+curl -X POST -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: application/json" \
      -d @testing_payloads/game_state.json \
      http://localhost:8080/api/v1/throttle/calculate_throttle_steps
@@ -325,8 +370,7 @@ python throttling_sequencer/services/navigation/runner_for_steps_test_to_delete.
 
 # 12. Future Improvements
 
-* Add Keycloak integration
-* Add fake auth providers for local dev
+* Add fake auth providers for local dev (bypass Keycloak in development)
 * Add extended docker compose profiles:
 
   * IDE mode
